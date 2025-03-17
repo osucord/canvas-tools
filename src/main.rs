@@ -154,6 +154,6 @@ async fn main() {
         .status()
         .expect("Failed to execute ffmpeg command");
 
-    eprintln!("{}", output);
+    eprintln!("{output}");
     println!("Done!");
 }
