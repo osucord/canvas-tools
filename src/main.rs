@@ -1,9 +1,10 @@
 mod modules;
+mod config;
 
-use crate::modules::timelapse::timelapse;
 use clap::Command;
 use sqlx::SqlitePool;
 use std::env;
+use crate::modules::{heatmap, timelapse};
 
 fn cli() -> Command {
     Command::new("canvas")
@@ -11,6 +12,7 @@ fn cli() -> Command {
         .subcommand_required(true)
         .arg_required_else_help(true)
         .subcommand(Command::new("timelapse").about("Render a timelapse video of the canvas"))
+        .subcommand(Command::new("heatmap").about("Render a heatmap of the canvas"))
 }
 
 #[tokio::main]
@@ -22,7 +24,10 @@ async fn main() {
 
     match matches.subcommand() {
         Some(("timelapse", _sub_matches)) => {
-            timelapse(pool).await;
+            timelapse::timelapse(pool).await;
+        },
+        Some(("heatmap", _sub_matches)) => {
+            heatmap::heatmap(pool).await;
         }
         _ => unreachable!(),
     }

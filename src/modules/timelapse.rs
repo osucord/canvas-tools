@@ -3,11 +3,11 @@ use sqlx::{query, Pool, Sqlite};
 use std::fs::create_dir_all;
 use std::io::Write;
 use std::process::{Command, Stdio};
+use crate::config::CANVAS_SIZES;
 
-const PIXELS_PER_FRAME: i32 = 20;
+const PIXELS_PER_FRAME: i32 = 2000;
 const MIN_SECONDS_BETWEEN_FRAMES: i32 = 20;
 const FRAMES_PER_SECOND: i32 = 60;
-const CANVAS_SIZES: [(u32, u32); 3] = [(500, 281), (500, 540), (960, 540)];
 const IMAGE_SIZE: (u32, u32) = (960, 540);
 const VIDEO_SCALE: u32 = 2;
 
