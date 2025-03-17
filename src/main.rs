@@ -1,5 +1,5 @@
 use image::{ImageBuffer, Rgba};
-use sqlx::{query, query_scalar, SqlitePool};
+use sqlx::{query, SqlitePool};
 use std::env;
 use std::io::Write;
 use std::process::{Command, Stdio};
