@@ -1,7 +1,8 @@
 use image::{ImageBuffer, Rgba};
 use sqlx::{query, query_scalar, SqlitePool};
 use std::env;
-use std::process::Command;
+use std::io::Write;
+use std::process::{Command, Stdio};
 
 const PIXELS_PER_FRAME: i32 = 20;
 const MIN_SECONDS_BETWEEN_FRAMES: i32 = 20;
@@ -84,19 +85,19 @@ async fn main() {
     let mut canvas_size_idx = 0;
     let mut placement_offset = pixel_offset(canvas_size_idx);
     let mut image = blank_image(canvas_size_idx);
+    let mut frames = vec![];
 
     let mut frame_start_time = 0;
     let mut remaining_pixels = 0;
-    let mut frame = 0;
     for (i, pixel) in placements.iter().enumerate() {
         let x = pixel.x as u32;
         let y = pixel.y as u32;
         let timestamp: i32 = pixel.created_at.clone().unwrap().parse().unwrap();
 
         if remaining_pixels <= 0 && timestamp - frame_start_time > MIN_SECONDS_BETWEEN_FRAMES {
-            image.save(format!("output/image-{frame:05}.png")).unwrap();
+            let raw_frame = image.as_raw().clone();
+            frames.push(raw_frame);
             remaining_pixels = PIXELS_PER_FRAME;
-            frame += 1;
             frame_start_time = timestamp;
         }
 
@@ -120,40 +121,41 @@ async fn main() {
     }
 
     if remaining_pixels != 0 {
-        frame += 1;
-        image.save(format!("output/image-{frame:05}.png")).unwrap();
+        let raw_frame = image.as_raw().clone();
+        frames.push(raw_frame);
     }
 
-    println!("Rendering...");
+    println!("Rendering video...");
 
-    let output = Command::new("ffmpeg")
+    let mut output = Command::new("ffmpeg")
         .args([
-            "-framerate",
-            &FRAMES_PER_SECOND.to_string(),
-            "-f",
-            "image2",
-            "-i",
-            "./output/image-%05d.png",
-            "-c:v",
-            "libx264",
-            "-pix_fmt",
-            "yuv420p",
-            "-preset",
-            "veryslow",
+            "-framerate", &FRAMES_PER_SECOND.to_string(),
+            "-f", "rawvideo",
+            "-pix_fmt", "rgba",
+            "-video_size", "960x540",
+            "-i", "pipe:0",
+            "-c:v", "libx264",
+            "-pix_fmt", "yuv420p",
+            "-preset", "veryslow",
             "-y",
-            "-vf",
-            "scale=1920:1080:flags=neighbor", // 960x540 * 2
-            "-crf",
-            "24",
-            "-tune",
-            "animation",
-            "-keyint_min",
-            "64",
+            "-vf", "scale=1920:1080:flags=neighbor", // 960x540 * 2
+            "-crf", "24",
+            "-tune", "animation",
+            "-keyint_min", "64",
             "./output/video.mp4",
         ])
-        .status()
+        .stdin(Stdio::piped())
+        .spawn()
         .expect("Failed to execute ffmpeg command");
 
-    eprintln!("{output}");
+    let stdin = output.stdin.as_mut().expect("Failed to open stdin");
+
+    for frame in frames {
+        stdin.write_all(&frame).expect("Failed to write frame");
+    }
+
+    let _ = stdin;
+    let _ = output.wait_with_output().expect("Failed to wait on child");
+
     println!("Done!");
 }
