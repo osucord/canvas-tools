@@ -4,9 +4,9 @@ use std::env;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-const PIXELS_PER_FRAME: i32 = 20;
-const MIN_SECONDS_BETWEEN_FRAMES: i32 = 20;
-const FRAMES_PER_SECOND: i32 = 60;
+const PIXELS_PER_FRAME: i32 = 10;
+const MIN_SECONDS_BETWEEN_FRAMES: i32 = 10;
+const FRAMES_PER_SECOND: i32 = 120;
 const CANVAS_SIZES: [(u32, u32); 3] = [(500, 281), (500, 540), (960, 540)];
 const IMAGE_SIZE: (u32, u32) = (960, 540);
 
@@ -76,57 +76,15 @@ async fn main() {
             .fetch_all(&pool)
             .await
             .unwrap();
-    let pixel_count =
-        query_scalar!("SELECT COUNT(*) FROM pixel WHERE created_at > '2025-02-28 17:00:00'")
-            .fetch_one(&pool)
-            .await
-            .unwrap();
 
     let mut canvas_size_idx = 0;
     let mut placement_offset = pixel_offset(canvas_size_idx);
     let mut image = blank_image(canvas_size_idx);
-    let mut frames = vec![];
 
     let mut frame_start_time = 0;
     let mut remaining_pixels = 0;
-    for (i, pixel) in placements.iter().enumerate() {
-        let x = pixel.x as u32;
-        let y = pixel.y as u32;
-        let timestamp: i32 = pixel.created_at.clone().unwrap().parse().unwrap();
-
-        if remaining_pixels <= 0 && timestamp - frame_start_time > MIN_SECONDS_BETWEEN_FRAMES {
-            let raw_frame = image.as_raw().clone();
-            frames.push(raw_frame);
-            remaining_pixels = PIXELS_PER_FRAME;
-            frame_start_time = timestamp;
-        }
-
-        if i % 1000 == 0 {
-            println!("\rRendering frames: {}%", i * 100 / pixel_count as usize);
-        }
-
-        remaining_pixels -= 1;
-
-        if x > CANVAS_SIZES[canvas_size_idx].0 || y > CANVAS_SIZES[canvas_size_idx].1 {
-            canvas_size_idx += 1;
-            image = extend_canvas(&image, canvas_size_idx);
-            placement_offset = pixel_offset(canvas_size_idx);
-        }
-
-        image.put_pixel(
-            x + placement_offset.0,
-            y + placement_offset.1,
-            hex_to_rgba(&pixel.color),
-        );
-    }
-
-    if remaining_pixels != 0 {
-        let raw_frame = image.as_raw().clone();
-        frames.push(raw_frame);
-    }
-
+    
     println!("Rendering video...");
-
     let mut output = Command::new("ffmpeg")
         .args([
             "-framerate", &FRAMES_PER_SECOND.to_string(),
@@ -147,11 +105,38 @@ async fn main() {
         .stdin(Stdio::piped())
         .spawn()
         .expect("Failed to execute ffmpeg command");
-
     let stdin = output.stdin.as_mut().expect("Failed to open stdin");
+    
+    for pixel in placements {
+        let x = pixel.x as u32;
+        let y = pixel.y as u32;
+        let timestamp: i32 = pixel.created_at.clone().unwrap().parse().unwrap();
 
-    for frame in frames {
-        stdin.write_all(&frame).expect("Failed to write frame");
+        if remaining_pixels <= 0 && timestamp - frame_start_time > MIN_SECONDS_BETWEEN_FRAMES {
+            let raw_frame = image.as_raw().clone();
+            stdin.write_all(&raw_frame).expect("Failed to write frame");
+            remaining_pixels = PIXELS_PER_FRAME;
+            frame_start_time = timestamp;
+        }
+
+        remaining_pixels -= 1;
+
+        if x > CANVAS_SIZES[canvas_size_idx].0 || y > CANVAS_SIZES[canvas_size_idx].1 {
+            canvas_size_idx += 1;
+            image = extend_canvas(&image, canvas_size_idx);
+            placement_offset = pixel_offset(canvas_size_idx);
+        }
+
+        image.put_pixel(
+            x + placement_offset.0,
+            y + placement_offset.1,
+            hex_to_rgba(&pixel.color),
+        );
+    }
+
+    if remaining_pixels != 0 {
+        let raw_frame = image.as_raw().clone();
+        stdin.write_all(&raw_frame).expect("Failed to write frame");
     }
 
     let _ = stdin;
