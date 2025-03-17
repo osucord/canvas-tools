@@ -9,6 +9,7 @@ const MIN_SECONDS_BETWEEN_FRAMES: i32 = 10;
 const FRAMES_PER_SECOND: i32 = 120;
 const CANVAS_SIZES: [(u32, u32); 3] = [(500, 281), (500, 540), (960, 540)];
 const IMAGE_SIZE: (u32, u32) = (960, 540);
+const VIDEO_SCALE: u32 = 2;
 
 fn hex_to_rgba(hex: &str) -> Rgba<u8> {
     let r = u8::from_str_radix(&hex[1..3], 16).unwrap();
@@ -90,13 +91,13 @@ async fn main() {
             "-framerate", &FRAMES_PER_SECOND.to_string(),
             "-f", "rawvideo",
             "-pix_fmt", "rgba",
-            "-video_size", "960x540",
+            "-video_size", &format!("{}x{}", IMAGE_SIZE.0, IMAGE_SIZE.1),
             "-i", "pipe:0",
             "-c:v", "libx264",
             "-pix_fmt", "yuv420p",
             "-preset", "veryslow",
             "-y",
-            "-vf", "scale=1920:1080:flags=neighbor", // 960x540 * 2
+            "-vf", &format!("scale={}:{}:flags=neighbor", IMAGE_SIZE.0 * VIDEO_SCALE, IMAGE_SIZE.1 * VIDEO_SCALE),
             "-crf", "24",
             "-tune", "animation",
             "-keyint_min", "64",
