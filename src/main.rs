@@ -1,10 +1,11 @@
 mod modules;
 mod config;
+mod util;
 
 use clap::Command;
 use sqlx::SqlitePool;
 use std::env;
-use crate::modules::{heatmap, timelapse};
+use crate::modules::{heatmap, timelapse, usermap};
 
 fn cli() -> Command {
     Command::new("canvas")
@@ -13,6 +14,7 @@ fn cli() -> Command {
         .arg_required_else_help(true)
         .subcommand(Command::new("timelapse").about("Render a timelapse video of the canvas"))
         .subcommand(Command::new("heatmap").about("Render a heatmap of the canvas"))
+        .subcommand(Command::new("usermap").about("Render a usermap of the canvas, showing who placed each pixel"))
 }
 
 #[tokio::main]
@@ -28,6 +30,9 @@ async fn main() {
         },
         Some(("heatmap", _sub_matches)) => {
             heatmap::heatmap(pool).await;
+        },
+        Some(("usermap", _sub_matches)) => {
+            usermap::usermap(pool).await;
         }
         _ => unreachable!(),
     }

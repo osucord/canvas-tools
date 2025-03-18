@@ -4,19 +4,13 @@ use std::fs::create_dir_all;
 use std::io::Write;
 use std::process::{Command, Stdio};
 use crate::config::CANVAS_SIZES;
+use crate::util::color::hex_to_rgba;
 
 const PIXELS_PER_FRAME: i32 = 2000;
 const MIN_SECONDS_BETWEEN_FRAMES: i32 = 20;
 const FRAMES_PER_SECOND: i32 = 60;
 const IMAGE_SIZE: (u32, u32) = (960, 540);
 const VIDEO_SCALE: u32 = 2;
-
-fn hex_to_rgba(hex: &str) -> Rgba<u8> {
-    let r = u8::from_str_radix(&hex[1..3], 16).unwrap();
-    let g = u8::from_str_radix(&hex[3..5], 16).unwrap();
-    let b = u8::from_str_radix(&hex[5..7], 16).unwrap();
-    Rgba([r, g, b, 255])
-}
 
 fn pixel_offset(canvas_size_idx: usize) -> (u32, u32) {
     (
@@ -25,7 +19,7 @@ fn pixel_offset(canvas_size_idx: usize) -> (u32, u32) {
     )
 }
 
-fn blank_image(canvas_size_idx: usize) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+fn blank_image_borders(canvas_size_idx: usize) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let mut image = image::ImageBuffer::new(IMAGE_SIZE.0, IMAGE_SIZE.1);
     let (width, height) = CANVAS_SIZES[canvas_size_idx];
     let (x_offset, y_offset) = pixel_offset(canvas_size_idx);
@@ -49,7 +43,7 @@ fn extend_canvas(
     let old_offset = pixel_offset(canvas_size_idx - 1);
     let (old_width, old_height) = CANVAS_SIZES[canvas_size_idx - 1];
     let new_offset = pixel_offset(canvas_size_idx);
-    let mut new_image = blank_image(canvas_size_idx);
+    let mut new_image = blank_image_borders(canvas_size_idx);
 
     for x in 0..old_width {
         for y in 0..old_height {
@@ -75,7 +69,7 @@ pub async fn timelapse(pool: Pool<Sqlite>) {
 
     let mut canvas_size_idx = 0;
     let mut placement_offset = pixel_offset(canvas_size_idx);
-    let mut image = blank_image(canvas_size_idx);
+    let mut image = blank_image_borders(canvas_size_idx);
 
     let mut frame_start_time = 0;
     let mut remaining_pixels = 0;

@@ -266,8 +266,10 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "dotenvy",
+ "hsv",
  "image",
  "palette",
+ "serde_json",
  "sqlx",
  "tokio",
 ]
@@ -797,6 +799,12 @@ checksum = "589533453244b0995c858700322199b2becb13b627df2851f64a2775d024abcf"
 dependencies = [
  "windows-sys 0.59.0",
 ]
+
+[[package]]
+name = "hsv"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a03664f940932e7453c5f1dd0ce278a7af2ff47d440fad00f679b4f5bf0da869"
 
 [[package]]
 name = "icu_collections"

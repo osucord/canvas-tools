@@ -56,6 +56,6 @@ pub async fn heatmap(pool: Pool<Sqlite>) {
             image.put_pixel(x, y, heatmap_color(heat));
         }
     }
-    
+
     image.save("output/heatmap.png").unwrap();
 }
