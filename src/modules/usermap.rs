@@ -1,22 +1,9 @@
-use crate::config::CANVAS_SIZES;
 use crate::util::color::hex_to_rgba;
 use hsv::hsv_to_rgb;
-use image::{ImageBuffer, Rgba};
+use image::Rgba;
 use sqlx::{query, Pool, Sqlite};
 use std::collections::HashMap;
-
-const FINAL_CANVAS_SIZE: (u32, u32) = CANVAS_SIZES[CANVAS_SIZES.len() - 1];
-
-fn blank_image() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
-    let mut image = image::ImageBuffer::new(FINAL_CANVAS_SIZE.0, FINAL_CANVAS_SIZE.1);
-    for x in 0..image.width() {
-        for y in 0..image.height() {
-            image.put_pixel(x, y, Rgba([255, 255, 255, 255]));
-        }
-    }
-
-    image
-}
+use crate::util::canvas::blank_image;
 
 pub async fn usermap(pool: Pool<Sqlite>) {
     let placements = query!(
