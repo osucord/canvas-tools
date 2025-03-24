@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT du.discord_id as user_id, strftime('%s', p.created_at) as created_at, mod_action \n        FROM pixel as p \n        JOIN discord_user du ON p.user_id = du.user_id \n        WHERE p.created_at > '2025-02-28 17:00:00'",
+  "query": "SELECT du.discord_id as user_id, strftime('%s', p.created_at) as created_at, mod_action\n        FROM pixel as p\n        JOIN discord_user du ON p.user_id = du.user_id\n        WHERE p.created_at > '2025-02-28 17:00:00'",
   "describe": {
     "columns": [
       {
@@ -28,5 +28,5 @@
       false
     ]
   },
-  "hash": "c95c2b5ebbc1e38b2e3a5dba03a88baec2b01e038d1a7905e81d0f0115908496"
+  "hash": "065083b5cda4aac977f343c620fe4f426e778d9397afde9797c5a9922a03cff0"
 }

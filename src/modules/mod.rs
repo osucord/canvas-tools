@@ -4,3 +4,4 @@ pub mod usermap;
 pub mod singleplace;
 pub mod singleplayer;
 pub mod longsession;
+pub mod currentpixels;

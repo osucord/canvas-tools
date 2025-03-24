@@ -1,4 +1,5 @@
 use crate::util::db::get_user_map;
+use crate::util::io::print_write;
 use sqlx::{query, Pool, Sqlite};
 use std::collections::HashMap;
 use std::fs::File;
@@ -6,11 +7,6 @@ use std::io::BufWriter;
 use std::io::Write;
 
 const MIN_PIXELS: i32 = 50;
-
-fn print_write(writer: &mut BufWriter<File>, text: &str) {
-    println!("{text}");
-    writeln!(writer, "{}", text).unwrap();
-}
 
 pub async fn longsession(pool: Pool<Sqlite>, seconds: &i32) {
     let placements = query!(

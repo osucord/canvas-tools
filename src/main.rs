@@ -2,7 +2,7 @@ mod config;
 mod modules;
 mod util;
 
-use crate::modules::{heatmap, longsession, singleplace, singleplayer, timelapse, usermap};
+use crate::modules::{currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap};
 use clap::{Arg, Command};
 use sqlx::SqlitePool;
 use std::env;
@@ -37,7 +37,11 @@ fn cli() -> Command {
                         .help("Specify the amount of seconds")
                         .default_value("5")
                         .value_parser(clap::value_parser!(i32)),
-                ),
+                )
+        )
+        .subcommand(
+            Command::new("currentpixels")
+                .about("Make a leaderboard counting only the pixels still on the canvas."),
         )
 }
 
@@ -67,6 +71,9 @@ async fn main() {
         }
         Some(("longsession", sub_matches)) => {
             longsession::longsession(pool, sub_matches.get_one::<i32>("seconds").unwrap()).await;
+        }
+        Some(("currentpixels", _sub_matches)) => {
+            currentpixels::currentpixels(pool).await;
         }
         _ => unreachable!(),
     }
