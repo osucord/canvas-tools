@@ -5,6 +5,7 @@ mod util;
 use clap::Command;
 use sqlx::SqlitePool;
 use std::env;
+use std::fs::create_dir_all;
 use crate::modules::{heatmap, timelapse, usermap, singleplace};
 
 fn cli() -> Command {
@@ -24,6 +25,7 @@ async fn main() {
     dotenvy::dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = SqlitePool::connect(&database_url).await.unwrap();
+    create_dir_all("./output").expect("Failed to create output directory");
 
     match matches.subcommand() {
         Some(("timelapse", _sub_matches)) => {

@@ -1,6 +1,5 @@
 use image::{ImageBuffer, Rgba};
 use sqlx::{query, Pool, Sqlite};
-use std::fs::create_dir_all;
 use std::io::Write;
 use std::process::{Command, Stdio};
 use crate::config::CANVAS_SIZES;
@@ -74,7 +73,6 @@ pub async fn timelapse(pool: Pool<Sqlite>) {
     let mut frame_start_time = 0;
     let mut remaining_pixels = 0;
 
-    create_dir_all("./output").expect("Failed to create output directory");
     println!("Rendering video...");
     #[rustfmt::skip]
     let mut output = Command::new("ffmpeg")
