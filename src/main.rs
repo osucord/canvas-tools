@@ -1,12 +1,12 @@
-mod modules;
 mod config;
+mod modules;
 mod util;
 
-use clap::Command;
+use crate::modules::{heatmap, longsession, singleplace, singleplayer, timelapse, usermap};
+use clap::{Arg, Command};
 use sqlx::SqlitePool;
 use std::env;
 use std::fs::create_dir_all;
-use crate::modules::{heatmap, timelapse, usermap, singleplace, singleplayer};
 
 fn cli() -> Command {
     Command::new("canvas")
@@ -15,9 +15,30 @@ fn cli() -> Command {
         .arg_required_else_help(true)
         .subcommand(Command::new("timelapse").about("Render a timelapse video of the canvas"))
         .subcommand(Command::new("heatmap").about("Render a heatmap of the canvas"))
-        .subcommand(Command::new("usermap").about("Render a usermap of the canvas, showing who placed each pixel"))
-        .subcommand(Command::new("singleplace").about("Render the canvas, without placing pixels over drawn pixels"))
-        .subcommand(Command::new("singleplayer").about("Render one canvas per user, showing only the pixels they placed."))
+        .subcommand(
+            Command::new("usermap")
+                .about("Render a usermap of the canvas, showing who placed each pixel"),
+        )
+        .subcommand(
+            Command::new("singleplace")
+                .about("Render the canvas, without placing pixels over drawn pixels"),
+        )
+        .subcommand(
+            Command::new("singleplayer")
+                .about("Render one canvas per user, showing only the pixels they placed."),
+        )
+        .subcommand(
+            Command::new("longsession")
+                .about("Show a list of the longest sessions, with a max pause of X seconds.")
+                .arg(
+                    Arg::new("seconds")
+                        .short('s')
+                        .long("seconds")
+                        .help("Specify the amount of seconds")
+                        .default_value("5")
+                        .value_parser(clap::value_parser!(i32)),
+                ),
+        )
 }
 
 #[tokio::main]
@@ -31,18 +52,21 @@ async fn main() {
     match matches.subcommand() {
         Some(("timelapse", _sub_matches)) => {
             timelapse::timelapse(pool).await;
-        },
+        }
         Some(("heatmap", _sub_matches)) => {
             heatmap::heatmap(pool).await;
-        },
+        }
         Some(("usermap", _sub_matches)) => {
             usermap::usermap(pool).await;
-        },
+        }
         Some(("singleplace", _sub_matches)) => {
             singleplace::singleplace(pool).await;
-        },
+        }
         Some(("singleplayer", _sub_matches)) => {
             singleplayer::singleplayer(pool).await;
+        }
+        Some(("longsession", sub_matches)) => {
+            longsession::longsession(pool, sub_matches.get_one::<i32>("seconds").unwrap()).await;
         }
         _ => unreachable!(),
     }

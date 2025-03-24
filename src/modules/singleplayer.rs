@@ -5,6 +5,7 @@ use image::Rgba;
 use sqlx::{query, Pool, Sqlite};
 use std::collections::HashMap;
 use std::fs::create_dir_all;
+use crate::util::db::get_user_map;
 
 pub async fn singleplayer(pool: Pool<Sqlite>) {
     let placements = query!(
@@ -16,14 +17,7 @@ pub async fn singleplayer(pool: Pool<Sqlite>) {
     .fetch_all(&pool)
     .await
     .unwrap();
-    let users: HashMap<u64, String> =
-        query!("SELECT discord_id, discord_username FROM discord_user")
-            .fetch_all(&pool)
-            .await
-            .unwrap()
-            .into_iter()
-            .map(|u| (u.discord_id.parse().unwrap(), u.discord_username))
-            .collect();
+    let users: HashMap<u64, String> = get_user_map(pool).await;
 
     const FINAL_CANVAS_SIZE: (u32, u32) = CANVAS_SIZES[CANVAS_SIZES.len() - 1];
     let mut grid = vec![
