@@ -1,7 +1,7 @@
 use sqlx::{query, Pool, Sqlite};
 use crate::config::CANVAS_SIZES;
 use crate::util;
-use crate::util::canvas::blank_image;
+use crate::util::canvas::white_image;
 
 pub async fn singleplace(pool: Pool<Sqlite>) {
     let placements = query!("SELECT x, y, color FROM pixel WHERE created_at > '2025-02-28 17:00:00'")
@@ -10,7 +10,7 @@ pub async fn singleplace(pool: Pool<Sqlite>) {
         .unwrap();
 
     const FINAL_CANVAS_SIZE: (u32, u32) = CANVAS_SIZES[CANVAS_SIZES.len() - 1];
-    let mut image = blank_image();
+    let mut image = white_image();
     let mut placed = vec![vec![false; FINAL_CANVAS_SIZE.1 as usize]; FINAL_CANVAS_SIZE.0 as usize];
 
     for pixel in placements {

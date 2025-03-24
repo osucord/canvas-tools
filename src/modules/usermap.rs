@@ -3,7 +3,7 @@ use hsv::hsv_to_rgb;
 use image::Rgba;
 use sqlx::{query, Pool, Sqlite};
 use std::collections::HashMap;
-use crate::util::canvas::blank_image;
+use crate::util::canvas::white_image;
 
 pub async fn usermap(pool: Pool<Sqlite>) {
     let placements = query!(
@@ -16,7 +16,7 @@ pub async fn usermap(pool: Pool<Sqlite>) {
     .await
     .unwrap();
 
-    let mut image = blank_image();
+    let mut image = white_image();
     let mut user_colors = match std::fs::read_to_string("db/user_colors.json") {
         Ok(json) => serde_json::from_str::<HashMap<u64, String>>(&json).unwrap(),
         Err(_) => HashMap::new(),

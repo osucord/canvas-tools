@@ -6,7 +6,7 @@ use clap::Command;
 use sqlx::SqlitePool;
 use std::env;
 use std::fs::create_dir_all;
-use crate::modules::{heatmap, timelapse, usermap, singleplace};
+use crate::modules::{heatmap, timelapse, usermap, singleplace, singleplayer};
 
 fn cli() -> Command {
     Command::new("canvas")
@@ -17,6 +17,7 @@ fn cli() -> Command {
         .subcommand(Command::new("heatmap").about("Render a heatmap of the canvas"))
         .subcommand(Command::new("usermap").about("Render a usermap of the canvas, showing who placed each pixel"))
         .subcommand(Command::new("singleplace").about("Render the canvas, without placing pixels over drawn pixels"))
+        .subcommand(Command::new("singleplayer").about("Render one canvas per user, showing only the pixels they placed."))
 }
 
 #[tokio::main]
@@ -39,6 +40,9 @@ async fn main() {
         },
         Some(("singleplace", _sub_matches)) => {
             singleplace::singleplace(pool).await;
+        },
+        Some(("singleplayer", _sub_matches)) => {
+            singleplayer::singleplayer(pool).await;
         }
         _ => unreachable!(),
     }
