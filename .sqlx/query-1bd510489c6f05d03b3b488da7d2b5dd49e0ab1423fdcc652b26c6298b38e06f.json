@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT discord_id, discord_username FROM discord_user",
+  "describe": {
+    "columns": [
+      {
+        "name": "discord_id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "discord_username",
+        "ordinal": 1,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "1bd510489c6f05d03b3b488da7d2b5dd49e0ab1423fdcc652b26c6298b38e06f"
+}

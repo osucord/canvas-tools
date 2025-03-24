@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT p.x, p.y, p.color, du.discord_id, p.mod_action \n         FROM pixel p \n         JOIN discord_user du ON p.user_id = du.user_id \n         WHERE p.created_at > '2025-02-28 17:00:00'",
+  "describe": {
+    "columns": [
+      {
+        "name": "x",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "y",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "color",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "discord_id",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "mod_action",
+        "ordinal": 4,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "dead92772f11ed35a3abb81b6173c890e9b212f42a9f63284bc98ff05c44a8b0"
+}
