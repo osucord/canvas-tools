@@ -58,7 +58,18 @@ async fn main() {
 
     match matches.subcommand() {
         Some(("timelapse", _sub_matches)) => {
-            timelapse::timelapse(pool).await;
+            // TODO: let configure on cmdline.
+            let min_seconds_between_frames = 20;
+            let frames_per_second = 60;
+            let pixels_per_frame = 2000;
+
+            timelapse::timelapse(
+                pool,
+                frames_per_second,
+                pixels_per_frame,
+                min_seconds_between_frames,
+            )
+            .await;
         }
         Some(("heatmap", _sub_matches)) => {
             heatmap::heatmap(pool).await;

@@ -18,6 +18,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
+name = "aformat"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f387c59d52324934bdd3586fe904051338ce4583a9bb921982a3dbb060a26e6f"
+dependencies = [
+ "aformat-macros",
+ "to-arraystring",
+ "typenum",
+ "typenum_mappings",
+]
+
+[[package]]
+name = "aformat-macros"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "254adeba6d67e7e6706f01ffdf1787cdad41e361be5b7c1e3265bba54dca7d8f"
+dependencies = [
+ "bytestring",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "aligned-vec"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -261,9 +285,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
+name = "bytestring"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e465647ae23b2823b0753f50decb2d5a86d2bb2cac04788fafd1f80e45378e5f"
+dependencies = [
+ "bytes",
+]
+
+[[package]]
 name = "canvas"
 version = "0.1.0"
 dependencies = [
+ "aformat",
  "clap",
  "dotenvy",
  "hsv",
@@ -271,6 +305,7 @@ dependencies = [
  "palette",
  "serde_json",
  "sqlx",
+ "to-arraystring",
  "tokio",
 ]
 
@@ -2259,6 +2294,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
+name = "to-arraystring"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fafaa22f176928fb926345e78eb2ec404603c878b274e6ab1f76de1f6dde1b1"
+dependencies = [
+ "arrayvec",
+ "itoa",
+ "ryu",
+]
+
+[[package]]
 name = "tokio"
 version = "1.44.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2367,6 +2413,18 @@ name = "typenum"
 version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dccffe3ce07af9386bfd29e80c0ab1a8205a2fc34e4bcd40364df902cfa8f3f"
+
+[[package]]
+name = "typenum_mappings"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0cbc2d8952dd1e08b0164a5b51549e80631ac9da4107669d26c8ea89cb0b5545"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "to-arraystring",
+]
 
 [[package]]
 name = "unicode-bidi"
