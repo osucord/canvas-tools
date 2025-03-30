@@ -12,7 +12,8 @@ pub async fn currentpixels(pool: Pool<Sqlite>) {
         "SELECT p.x, p.y, du.discord_id as user_id, mod_action
         FROM pixel as p
         JOIN discord_user du ON p.user_id = du.user_id
-        WHERE p.created_at > '2025-02-28 17:00:00'"
+        JOIN user u ON du.user_id = u.user_id
+        WHERE p.created_at > '2025-02-28 17:00:00' AND u.is_banned = 0"
     )
     .fetch_all(&pool)
     .await
