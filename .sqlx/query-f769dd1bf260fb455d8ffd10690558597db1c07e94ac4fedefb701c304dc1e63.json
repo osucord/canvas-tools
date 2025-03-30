@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT COUNT(*) as count, du.discord_username as username\n        FROM pixel as p\n        JOIN discord_user du ON p.user_id = du.user_id\n        WHERE p.mod_action = 0 AND p.created_at > '2025-02-28 17:00:00'\n        GROUP BY du.user_id\n        ORDER BY COUNT(*) DESC",
+  "describe": {
+    "columns": [
+      {
+        "name": "count",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "username",
+        "ordinal": 1,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "f769dd1bf260fb455d8ffd10690558597db1c07e94ac4fedefb701c304dc1e63"
+}

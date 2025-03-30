@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT COUNT(*) FROM pixel WHERE mod_action = 0 AND created_at > '2025-02-28 17:00:00'",
+  "describe": {
+    "columns": [
+      {
+        "name": "COUNT(*)",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "3fc74b1dd0d00eb6d06c782a9eddf94e211ef32d2acc3fb4f1de6c09d465fbfc"
+}

@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT p.x, p.y, du.discord_id as user_id, mod_action\n        FROM pixel as p\n        JOIN discord_user du ON p.user_id = du.user_id\n        WHERE p.created_at > '2025-02-28 17:00:00'",
+  "query": "SELECT p.x, p.y, du.discord_id as user_id, mod_action\n        FROM pixel as p\n        JOIN discord_user du ON p.user_id = du.user_id\n        JOIN user u ON du.user_id = u.user_id\n        WHERE p.created_at > '2025-02-28 17:00:00' AND u.is_banned = 0",
   "describe": {
     "columns": [
       {
@@ -34,5 +34,5 @@
       false
     ]
   },
-  "hash": "0e64aedf46584075b76c85e1ef5b05d415f5c55abd29b836cc48b3ca96e69047"
+  "hash": "d442839476fe15a82514324b2a8eebe5a64f70bd6c8bd0a0c68f70260f51d4dd"
 }
