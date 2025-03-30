@@ -39,7 +39,7 @@ pub async fn currentpixels(pool: Pool<Sqlite>) {
     }
 
     let mut user_count_lb = user_counts.into_iter().collect::<Vec<(u64, i32)>>();
-    user_count_lb.sort_by(|(_, a), (_, b)| b.cmp(&a));
+    user_count_lb.sort_by(|(_, a), (_, b)| b.cmp(a));
     let output = File::create("output/currentpixels.txt").unwrap();
     let mut writer = BufWriter::new(output);
     print_write(&mut writer, "Most pixels placed on current canvas:");

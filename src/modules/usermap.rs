@@ -1,9 +1,9 @@
+use crate::util::canvas::white_image;
 use crate::util::color::hex_to_rgba;
 use hsv::hsv_to_rgb;
 use image::Rgba;
 use sqlx::{query, Pool, Sqlite};
 use std::collections::HashMap;
-use crate::util::canvas::white_image;
 
 pub async fn usermap(pool: Pool<Sqlite>) {
     let placements = query!(
@@ -36,7 +36,7 @@ pub async fn usermap(pool: Pool<Sqlite>) {
                     let v = ((discord_id as f64 % 50.0) + 50.0) / 100.0;
                     let (r, g, b) = hsv_to_rgb(h, s, v);
                     let color = Rgba([r, g, b, 255]);
-                    let hex = format!("#{:02x}{:02x}{:02x}", r, g, b);
+                    let hex = format!("#{r:02x}{g:02x}{b:02x}");
                     user_colors.insert(discord_id, hex);
                     color
                 }
