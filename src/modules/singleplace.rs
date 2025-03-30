@@ -4,7 +4,7 @@ use crate::util;
 use crate::util::canvas::white_image;
 
 pub async fn singleplace(pool: Pool<Sqlite>) {
-    let placements = query!("SELECT x, y, color FROM pixel WHERE created_at > '2025-02-28 17:00:00'")
+    let placements = query!("SELECT x, y, color, mod_action FROM pixel WHERE created_at > '2025-02-28 17:00:00'")
         .fetch_all(&pool)
         .await
         .unwrap();
@@ -16,6 +16,10 @@ pub async fn singleplace(pool: Pool<Sqlite>) {
     for pixel in placements {
         let x = pixel.x as u32;
         let y = pixel.y as u32;
+        if pixel.mod_action == 1 {
+            placed[x as usize][y as usize] = false;
+            continue;
+        }
         if placed[x as usize][y as usize] {
             continue;
         }
