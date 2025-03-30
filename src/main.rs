@@ -60,9 +60,9 @@ async fn main() {
     match matches.subcommand() {
         Some(("timelapse", _sub_matches)) => {
             // TODO: let configure on cmdline.
-            let min_seconds_between_frames = 20;
-            let frames_per_second = 60;
-            let pixels_per_frame = 2000;
+            let pixels_per_frame = 10;
+            let min_seconds_between_frames = 10;
+            let frames_per_second = 120;
 
             timelapse::timelapse(
                 pool,
@@ -74,9 +74,9 @@ async fn main() {
         }
         Some(("virginmap", _sub_matches)) => {
             // TODO: let configure on cmdline.
+            let pixels_per_frame = 10;
             let min_seconds_between_frames = 10;
             let frames_per_second = 120;
-            let pixels_per_frame = 10;
 
             virginmap::timelapse(
                 pool,
