@@ -3,7 +3,7 @@ mod modules;
 mod util;
 
 use crate::modules::{
-    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap, virginmap,
+    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap, virginmap, maincontributors
 };
 
 use clap::{Arg, Command};
@@ -46,6 +46,18 @@ fn cli() -> Command {
         .subcommand(
             Command::new("currentpixels")
                 .about("Make a leaderboard counting only the pixels still on the canvas."),
+        )
+        .subcommand(
+            Command::new("maincontributors")
+                .about("List the amount of people that were placed most of X% of the pixels")
+                .arg(
+                    Arg::new("percentage")
+                        .short('p')
+                        .long("percentage")
+                        .help("Specify the percentage")
+                        .default_value("90")
+                        .value_parser(clap::value_parser!(i32)),
+                ),
         )
 }
 
@@ -103,6 +115,9 @@ async fn main() {
         }
         Some(("currentpixels", _sub_matches)) => {
             currentpixels::currentpixels(pool).await;
+        }
+        Some(("maincontributors", sub_matches)) => {
+            maincontributors::maincontributors(pool, sub_matches.get_one::<i32>("percentage").unwrap()).await;
         }
         _ => unreachable!(),
     }
