@@ -1,17 +1,19 @@
 use crate::config::CANVAS_SIZES;
-use crate::util::color::hex_to_rgba;
-use crate::util::render::{blank_image_borders, extend_canvas, pixel_offset, start_ffmpeg};
+use crate::util::render::{
+    blank_image_borders_with_colour, extend_canvas_with_colour, pixel_offset, start_ffmpeg, BLACK,
+};
 use image::{ImageBuffer, Rgba};
 use sqlx::{query_as, Pool, Sqlite};
 use std::io::Write;
 use std::process::ChildStdin;
 
 struct Placement {
-    pub color: String,
     pub created_at: Option<String>,
     pub x: i64,
     pub y: i64,
 }
+
+const VIRGIN_COLOUR: Rgba<u8> = Rgba([255, 0, 255, 255]);
 
 pub async fn timelapse(
     pool: Pool<Sqlite>,
@@ -20,13 +22,13 @@ pub async fn timelapse(
     min_seconds_per_frame: i32,
 ) {
     let placements = query_as!(Placement,
-            "SELECT x, y, color, strftime('%s', created_at) as created_at FROM pixel WHERE created_at > '2025-02-28 17:00:00'"
+            "SELECT x, y, strftime('%s', created_at) as created_at FROM pixel WHERE created_at > '2025-02-28 17:00:00'"
         )
         .fetch_all(&pool)
         .await
         .unwrap();
 
-    let mut image = blank_image_borders(0);
+    let mut image = blank_image_borders_with_colour(0, VIRGIN_COLOUR, BLACK);
 
     let (child, mut stdin) = start_ffmpeg(fps).expect("failed to start ffmpeg");
 
@@ -73,15 +75,11 @@ async fn render_timelapse(
 
         if x > CANVAS_SIZES[canvas_size_idx].0 || y > CANVAS_SIZES[canvas_size_idx].1 {
             canvas_size_idx += 1;
-            *image = extend_canvas(image, canvas_size_idx);
+            *image = extend_canvas_with_colour(image, canvas_size_idx, VIRGIN_COLOUR, BLACK);
             placement_offset = pixel_offset(canvas_size_idx);
         }
 
-        image.put_pixel(
-            x + placement_offset.0,
-            y + placement_offset.1,
-            hex_to_rgba(&pixel.color),
-        );
+        image.put_pixel(x + placement_offset.0, y + placement_offset.1, BLACK);
     }
 
     if remaining_pixels < pixels_per_frame {

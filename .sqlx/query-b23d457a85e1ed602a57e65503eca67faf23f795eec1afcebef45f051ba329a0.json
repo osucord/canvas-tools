@@ -1,0 +1,32 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT x, y, strftime('%s', created_at) as created_at FROM pixel WHERE created_at > '2025-02-28 17:00:00'",
+  "describe": {
+    "columns": [
+      {
+        "name": "x",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "y",
+        "ordinal": 1,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 2,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "b23d457a85e1ed602a57e65503eca67faf23f795eec1afcebef45f051ba329a0"
+}
