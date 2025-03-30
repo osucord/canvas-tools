@@ -3,11 +3,10 @@ mod modules;
 mod util;
 
 use crate::modules::{
-    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap,
+    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap, virginmap,
 };
 
 use clap::{Arg, Command};
-use modules::virginmap;
 use sqlx::SqlitePool;
 use std::env;
 use std::fs::create_dir_all;
