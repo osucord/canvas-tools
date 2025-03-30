@@ -30,7 +30,7 @@ pub async fn timelapse(
 
     let mut image = blank_image_borders_with_colour(0, VIRGIN_COLOUR, BLACK);
 
-    let (child, mut stdin) = start_ffmpeg(fps).expect("failed to start ffmpeg");
+    let (child, mut stdin) = start_ffmpeg(fps, "virginmap").expect("failed to start ffmpeg");
 
     render_timelapse(
         &mut image,

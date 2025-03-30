@@ -3,7 +3,7 @@ mod modules;
 mod util;
 
 use crate::modules::{
-    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap, virginmap, maincontributors
+    currentpixels, heatmap, longsession, singleplace, singleplayer, timelapse, usermap, virginmap, maincontributors, agemap
 };
 
 use clap::{Arg, Command};
@@ -18,6 +18,10 @@ fn cli() -> Command {
         .arg_required_else_help(true)
         .subcommand(Command::new("timelapse").about("Render a timelapse video of the canvas"))
         .subcommand(Command::new("virginmap").about("Render a timelapse video of the canvas"))
+        .subcommand(
+            Command::new("agemap")
+                .about("Render a timelapse showing the age of each pixel"),
+        )
         .subcommand(Command::new("heatmap").about("Render a heatmap of the canvas"))
         .subcommand(
             Command::new("usermap")
@@ -91,6 +95,20 @@ async fn main() {
             let frames_per_second = 120;
 
             virginmap::timelapse(
+                pool,
+                frames_per_second,
+                pixels_per_frame,
+                min_seconds_between_frames,
+            )
+            .await;
+        }
+        Some(("agemap", _sub_matches)) => {
+            // TODO: let configure on cmdline.
+            let pixels_per_frame = 20;
+            let min_seconds_between_frames = 20;
+            let frames_per_second = 120;
+
+            agemap::agemap(
                 pool,
                 frames_per_second,
                 pixels_per_frame,

@@ -26,9 +26,9 @@ pub async fn timelapse(
         .await
         .unwrap();
 
-    let mut image = blank_image_borders(0);
+    let mut image = blank_image_borders(0, false);
 
-    let (child, mut stdin) = start_ffmpeg(fps).expect("failed to start ffmpeg");
+    let (child, mut stdin) = start_ffmpeg(fps, "timelapse").expect("failed to start ffmpeg");
 
     render_timelapse(
         &mut image,

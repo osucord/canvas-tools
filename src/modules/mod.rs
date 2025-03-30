@@ -7,3 +7,4 @@ pub mod timelapse;
 pub mod usermap;
 pub mod virginmap;
 pub mod maincontributors;
+pub mod agemap;

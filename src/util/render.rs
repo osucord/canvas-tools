@@ -11,7 +11,7 @@ const VIDEO_SCALE: u32 = 2;
 const WHITE: Rgba<u8> = Rgba([255, 255, 255, 0]);
 pub const BLACK: Rgba<u8> = Rgba([0, 0, 0, 255]);
 
-pub fn start_ffmpeg(fps: u8) -> std::io::Result<(Child, ChildStdin)> {
+pub fn start_ffmpeg(fps: u8, filename: &str) -> std::io::Result<(Child, ChildStdin)> {
     #[rustfmt::skip]
     let mut child = Command::new("ffmpeg")
         .args([
@@ -28,7 +28,7 @@ pub fn start_ffmpeg(fps: u8) -> std::io::Result<(Child, ChildStdin)> {
             "-crf", "24",
             "-tune", "animation",
             "-keyint_min", "64",
-            "./output/timelapse.mp4",
+            format!("./output/{filename}.mp4").as_str(),
         ])
         .stdin(std::process::Stdio::piped())
         .spawn()?;
@@ -45,7 +45,10 @@ pub fn pixel_offset(canvas_size_idx: usize) -> (u32, u32) {
     )
 }
 
-pub fn blank_image_borders(canvas_size_idx: usize) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+pub fn blank_image_borders(canvas_size_idx: usize, invert: bool) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    if invert {
+        return blank_image_borders_with_colour(canvas_size_idx, WHITE, BLACK);
+    }
     blank_image_borders_with_colour(canvas_size_idx, BLACK, WHITE)
 }
 
