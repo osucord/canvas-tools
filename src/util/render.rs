@@ -46,11 +46,7 @@ pub fn pixel_offset(canvas_size_idx: usize) -> (u32, u32) {
 }
 
 pub fn blank_image_borders(canvas_size_idx: usize) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
-    blank_image_borders_with_colour(
-        canvas_size_idx,
-        Rgba([0, 0, 0, 255]),
-        Rgba([255, 255, 255, 255]),
-    )
+    blank_image_borders_with_colour(canvas_size_idx, BLACK, WHITE)
 }
 
 pub fn blank_image_borders_with_colour(
